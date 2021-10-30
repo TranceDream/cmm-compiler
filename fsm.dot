@@ -1,0 +1,54 @@
+digraph {
+    rankdir = LR
+    node [shape = doublecircle]
+    idn, int, float, char, str, se, plus, minus, op0, op
+    node [shape = circle]
+    init -> init [label = "empty"]
+    init -> idn [label = "prefix"]
+    idn -> idn [label = "identifier"]
+
+    init -> int [label = "number"]
+    int -> int [label = "number"]
+    int -> float0 [label = "dot"]
+    float0 -> float [label = "number"] 
+    float -> float [label = "number"]
+
+    init -> char0 [label = "single"]
+    char0 -> char1 [label = "any"]
+    char1 -> char [label = "single"]
+    char0 -> char [label = "single"]
+
+    init -> str0 [label = "double"]
+    str0 -> str0 [label = "any"]
+    str0 -> str [label = "double"]
+
+    init -> se [label = "delimiter"]
+
+    init -> plus [label = "plus"]
+    plus -> op [label = "plus | equal"]
+
+    init -> minus [label = "dash"]
+    minus -> op [label = "dash | equal"]
+
+    init -> or [label = "or"]
+    or -> op [label = "or"]
+
+    init -> and [label = "and"]
+    and -> op [label = "and"]
+
+    init -> bang [label = "bang"]
+    bang -> op [label = "equal"]
+
+    init -> op0 [label = "other-operators"]
+    op0 -> op [label = "equal"]
+
+    // init -> plus [label = "plus"]
+    // plus -> inc [label = "plus"]
+    // init -> dash [label = "dash"]
+    // dash -> dec [label = "dash"]
+    // init -> or [label = "or"]
+    // or -> lor [label = "or"]
+    // init -> and [label = "and"]
+    // and -> land [label = "and"]
+
+}
