@@ -49,8 +49,10 @@ export function analyze(source: string): lexical {
 				if (initRecv(data[i])) {
 					fsm.send(initRecv(data[i])!)
 					current += data[i]
-				} else {
+				} else if (data[i].match(/\s/)) {
 					fsm.send('init')
+				} else {
+					throw unacceptable
 				}
 				break
 			case 'idn':
