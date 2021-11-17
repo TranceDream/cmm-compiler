@@ -1,0 +1,37 @@
+S:		Set { "int", "char", "float", "void" }
+func:		Set { "int", "char", "float", "void" }
+type:		Set { "int", "char", "float", "void", "epsilon" }
+args:		Set { "int", "char", "float", "void", "epsilon" }
+funcBody:		Set { ";", "{" }
+arg:		Set { ",", "epsilon" }
+block:		Set { "{" }
+defineStmts:		Set { "int", "char", "float", "void", "epsilon" }
+stmts:		Set { "continue", "(", "for", "epsilon", "int", "return", "str", "while", "idn", "char", "float", "if", "break" }
+defineStmt:		Set { "=" }
+init:		Set { "=", "epsilon" }
+vars:		Set { ",", "epsilon" }
+stmt:		Set { "continue", "(", "for", "int", "return", "str", "while", "idn", "char", "float", "if", "break" }
+assignStmt:		Set { "(", "idn", "float", "char", "str", "int" }
+jumpStmt:		Set { "continue", "break", "return" }
+iterationStmt:		Set { "while", "for" }
+branchStmt:		Set { "if" }
+expression:		Set { "(", "idn", "float", "char", "str", "int" }
+isNullExpr:		Set { "epsilon", "(", "idn", "float", "char", "str", "int" }
+logicExpr:		Set { "!", "(", "idn", "float", "char", "str", "int" }
+blockStmt:		Set { "{" }
+result:		Set { "else", "epsilon" }
+boolExpr:		Set { "epsilon", "&&", "||" }
+lop:		Set { "&&", "||" }
+value:		Set { "(", "idn", "float", "char", "str", "int" }
+operation:		Set { "++", "==", "<=", "epsilon", "/=", "-=", "+=", "*=", "%=", "<", "!=", "=", ">", ">=" }
+compareOp:		Set { ">", ">=", "<", "<=", "==", "!=" }
+equalOp:		Set { "=", "+=", "-=", "*=", "/=", "%=" }
+item:		Set { "(", "idn", "float", "char", "str", "int" }
+valuePrime:		Set { "+", "-", "epsilon" }
+factor:		Set { "(", "idn", "float", "char", "str", "int" }
+itemPrime:		Set { "*", "/", "%", "epsilon" }
+callFunc:		Set { "(", "epsilon" }
+es:		Set { "idn", "(", "str", "float", "char", "int" }
+isNullEs:		Set { ",", "epsilon" }
+constValue:		Set { "float", "char", "str", "int" }
+numConst:		Set { "int" }

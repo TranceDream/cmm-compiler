@@ -1,0 +1,37 @@
+S:		Set { "#" }
+func:		Set { "#" }
+type:		Set { "idn" }
+args:		Set { ")" }
+funcBody:		Set { "#" }
+arg:		Set { ")" }
+block:		Set { "#" }
+defineStmts:		Set { "continue", "(", "for", "int", "return", "str", "while", "idn", "char", "float", "}", "if", "break" }
+stmts:		Set { "}" }
+defineStmt:		Set { "continue", "(", "for", "int", "return", "str", "while", "idn", "void", "char", "float", "}", "if", "break" }
+init:		Set { ",", ";" }
+vars:		Set { ";" }
+stmt:		Set { "continue", "(", "for", "int", "return", "str", "while", "idn", "char", "float", "}", "if", "break" }
+assignStmt:		Set { "continue", "(", "for", "int", "return", "str", "while", "idn", "char", "float", "}", "if", "break" }
+jumpStmt:		Set { "continue", "(", "for", "int", "return", "str", "while", "idn", "char", "float", "}", "if", "break" }
+iterationStmt:		Set { "continue", "(", "for", "int", "return", "str", "while", "idn", "char", "float", "}", "if", "break" }
+branchStmt:		Set { "continue", "(", "for", "int", "return", "str", "while", "idn", "char", "float", "}", "if", "break" }
+expression:		Set { ";", ")", "||", "&&", "," }
+isNullExpr:		Set { ";", ")", "," }
+logicExpr:		Set { ")" }
+blockStmt:		Set { "continue", "(", "for", "int", "return", "str", "while", "idn", "char", "else", "float", "}", "if", "break" }
+result:		Set { "continue", "(", "for", "int", "return", "str", "while", "idn", "char", "float", "}", "if", "break" }
+boolExpr:		Set { ")" }
+lop:		Set { "(", "idn", "float", "char", "str", "int" }
+value:		Set { "&&", "++", "||", "==", "<=", ")", ",", "/=", "-=", "+=", "*=", "%=", ";", "<", "!=", "=", ">", ">=" }
+operation:		Set { ";", ")", "||", "&&", "," }
+compareOp:		Set { "(", "idn", "float", "char", "str", "int" }
+equalOp:		Set { "(", "idn", "float", "char", "str", "int" }
+item:		Set { "&&", "++", "||", "==", "<=", ")", "+", ",", "-", "/=", "-=", "+=", "*=", "%=", ";", "<", "!=", "=", ">", ">=" }
+valuePrime:		Set { "&&", "++", "||", "==", "<=", ")", ",", "/=", "-=", "+=", "*=", "%=", ";", "<", "!=", "=", ">", ">=" }
+factor:		Set { "&&", "++", "||", "==", "<=", "%", ")", "*", "+", ",", "-", "/=", "/", "-=", "+=", "*=", "%=", ";", "<", "!=", "=", ">", ">=" }
+itemPrime:		Set { "&&", "++", "||", "==", "<=", ")", "+", ",", "-", "/=", "-=", "+=", "*=", "%=", ";", "<", "!=", "=", ">", ">=" }
+callFunc:		Set { "&&", "++", "||", "==", "<=", "%", ")", "*", "+", ",", "-", "/=", "/", "-=", "+=", "*=", "%=", ";", "<", "!=", "=", ">", ">=" }
+es:		Set { ")" }
+isNullEs:		Set { ")" }
+constValue:		Set { "&&", "++", "||", "==", "<=", "%", ")", "*", "+", ",", "-", "/=", "/", "-=", "+=", "*=", "%=", ";", "<", "!=", "=", ">", ">=" }
+numConst:		Set { "&&", "++", "||", "==", "<=", "%", ")", "*", "+", ",", "-", "/=", "/", "-=", "+=", "*=", "%=", ";", "<", "!=", "=", ">", ">=" }

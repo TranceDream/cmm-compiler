@@ -20,7 +20,7 @@ const keywords = [
 
 const unacceptable = new Error('Failed to pass lexical analysis.')
 
-interface token {
+export interface token {
 	type: string
 	value: string
 }
