@@ -5,27 +5,27 @@ args:		Set { ")" }
 funcBody:		Set { "#" }
 arg:		Set { ")" }
 block:		Set { "#" }
-defineStmts:		Set { "continue", "(", "for", "int", "return", "str", "while", "idn", "char", "float", "}", "if", "break" }
+defineStmts:		Set { "const", "continue", "(", ")", "for", ",", "return", "str", "while", "idn", ";", "}", "if", "break" }
 stmts:		Set { "}" }
-defineStmt:		Set { "continue", "(", "for", "int", "return", "str", "while", "idn", "void", "char", "float", "}", "if", "break" }
+defineStmt:		Set { "const", "continue", "(", ")", "for", ",", "int", "return", "str", "while", "idn", "void", "char", ";", "float", "}", "if", "break" }
 init:		Set { ",", ";" }
 vars:		Set { ";" }
-stmt:		Set { "continue", "(", "for", "int", "return", "str", "while", "idn", "char", "float", "}", "if", "break" }
-assignStmt:		Set { "continue", "(", "for", "int", "return", "str", "while", "idn", "char", "float", "}", "if", "break" }
-jumpStmt:		Set { "continue", "(", "for", "int", "return", "str", "while", "idn", "char", "float", "}", "if", "break" }
-iterationStmt:		Set { "continue", "(", "for", "int", "return", "str", "while", "idn", "char", "float", "}", "if", "break" }
-branchStmt:		Set { "continue", "(", "for", "int", "return", "str", "while", "idn", "char", "float", "}", "if", "break" }
+stmt:		Set { "const", "continue", "(", "for", "return", "str", "while", "idn", "}", "if", "break" }
+assignStmt:		Set { "const", "continue", "(", "for", "return", "str", "while", "idn", "}", "if", "break" }
+jumpStmt:		Set { "const", "continue", "(", "for", "return", "str", "while", "idn", "}", "if", "break" }
+iterationStmt:		Set { "const", "continue", "(", "for", "return", "str", "while", "idn", "}", "if", "break" }
+branchStmt:		Set { "const", "continue", "(", "for", "return", "str", "while", "idn", "}", "if", "break" }
 expression:		Set { ";", ")", "||", "&&", "," }
 isNullExpr:		Set { ";", ")", "," }
 logicExpr:		Set { ")" }
-blockStmt:		Set { "continue", "(", "for", "int", "return", "str", "while", "idn", "char", "else", "float", "}", "if", "break" }
-result:		Set { "continue", "(", "for", "int", "return", "str", "while", "idn", "char", "float", "}", "if", "break" }
+blockStmt:		Set { "const", "continue", "(", "for", "return", "str", "while", "idn", "else", "}", "if", "break" }
+result:		Set { "const", "continue", "(", "for", "return", "str", "while", "idn", "}", "if", "break" }
 boolExpr:		Set { ")" }
-lop:		Set { "(", "idn", "float", "char", "str", "int" }
+lop:		Set { "(", "idn", "const", "str" }
 value:		Set { "&&", "++", "||", "==", "<=", ")", ",", "/=", "-=", "+=", "*=", "%=", ";", "<", "!=", "=", ">", ">=" }
 operation:		Set { ";", ")", "||", "&&", "," }
-compareOp:		Set { "(", "idn", "float", "char", "str", "int" }
-equalOp:		Set { "(", "idn", "float", "char", "str", "int" }
+compareOp:		Set { "(", "idn", "const", "str" }
+equalOp:		Set { "(", "idn", "const", "str" }
 item:		Set { "&&", "++", "||", "==", "<=", ")", "+", ",", "-", "/=", "-=", "+=", "*=", "%=", ";", "<", "!=", "=", ">", ">=" }
 valuePrime:		Set { "&&", "++", "||", "==", "<=", ")", ",", "/=", "-=", "+=", "*=", "%=", ";", "<", "!=", "=", ">", ">=" }
 factor:		Set { "&&", "++", "||", "==", "<=", "%", ")", "*", "+", ",", "-", "/=", "/", "-=", "+=", "*=", "%=", ";", "<", "!=", "=", ">", ">=" }

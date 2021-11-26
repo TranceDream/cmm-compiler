@@ -1,6 +1,6 @@
 export class Symbol {
 	flag?: string
-	type?: string | undefined	
+	type?: string | undefined
 	value?: string | undefined
 }
 
@@ -100,6 +100,9 @@ let minus: Terminal = { type: 'op', value: '-' }
 let multiply: Terminal = { type: 'op', value: '*' }
 let div: Terminal = { type: 'op', value: '/' }
 let mod: Terminal = { type: 'op', value: '%' }
+let intValue: Terminal = { type: 'const' }
+let floatValue: Terminal = { type: 'const' }
+let charValue: Terminal = { type: 'const' }
 export let end: Terminal = { type: '#' }
 
 export const VN: NonTerminal[] = []
@@ -191,7 +194,10 @@ const originalVT: Terminal[] = [
 	multiply,
 	div,
 	mod,
-	end
+	intValue,
+	floatValue,
+	charValue,
+	end,
 ]
 
 originalVT.map((vt) => {
@@ -236,8 +242,7 @@ export const rules: Rule[] = [
 		to: [
 			forKw,
 			lb,
-			isNullExpr,
-			semicolon,
+			defineStmts,
 			isNullExpr,
 			semicolon,
 			isNullExpr,
@@ -245,6 +250,20 @@ export const rules: Rule[] = [
 			blockStmt,
 		],
 	},
+	// {
+	// 	from: iterationStmt,
+	// 	to: [
+	// 		forKw,
+	// 		lb,
+	// 		isNullExpr,
+	// 		semicolon,
+	// 		isNullExpr,
+	// 		semicolon,
+	// 		isNullExpr,
+	// 		rb,
+	// 		blockStmt,
+	// 	],
+	// },
 	{ from: branchStmt, to: [ifKw, lb, logicExpr, rb, blockStmt, result] },
 	{ from: result, to: [elseKw, blockStmt] },
 	{ from: result, to: [epsilon] },
@@ -293,8 +312,8 @@ export const rules: Rule[] = [
 	{ from: isNullEs, to: [comma, isNullExpr, isNullEs] },
 	{ from: isNullEs, to: [epsilon] },
 	{ from: constValue, to: [numConst] },
-	{ from: constValue, to: [float] },
-	{ from: constValue, to: [char] },
+	{ from: constValue, to: [floatValue] },
+	{ from: constValue, to: [charValue] },
 	{ from: constValue, to: [str] },
-	{ from: numConst, to: [int] },
+	{ from: numConst, to: [intValue] },
 ]

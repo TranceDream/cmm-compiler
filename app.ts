@@ -11,6 +11,9 @@ fs.readFile(process.argv.slice(2)[0], (error, data) => {
 	stream.forEach((v) => console.log(v))
 	console.log('\n\n')
 	tokens.forEach((v) => console.log(v))
-
-	getStack(tokens)
+	const stack = getStack(tokens)
+	console.log('\n\n')
+	stack?.forEach((res) => {
+		console.log(res)
+	})
 })

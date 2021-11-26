@@ -9,17 +9,16 @@ import {
 	S,
 	epsilon,
 	end,
-	args,
-	type,
-	idn,
-	arg,
-	lb,
 } from './symbols'
 import { Set } from 'immutable'
 import fs from 'fs'
 import ObjectsToCsv from 'objects-to-csv'
-import config from './config'
 import { token } from './lexical'
+
+const unacceptable = (msg: string, index: number) =>
+	new Error(
+		'Failed to pass syntax analysis. At position ' + index + ':\t' + msg
+	)
 
 let first: Map<NonTerminal, Set<Terminal>> = new Map()
 let follow: Map<NonTerminal, Set<Terminal>> = new Map()
@@ -31,9 +30,8 @@ const getFirst = (rules: Rule[]) => {
 	VN.map((vn) => {
 		first.set(vn, Set())
 	})
-	let i = 0
 	while (true) {
-		let map1 = new Map(first)
+		let mapBefore = new Map(first)
 		rules.map((rule) => {
 			if (rule.to[0].flag == 'vt') {
 				first.set(rule.from, first.get(rule.from)!.concat([rule.to[0]]))
@@ -84,10 +82,15 @@ const getFirst = (rules: Rule[]) => {
 				})
 			}
 		})
-		if (i == 20) {
+		let same = true
+		mapBefore.forEach((v, k) => {
+			if (!v.equals(first.get(k))) {
+				same = false
+			}
+		})
+		if (same) {
 			break
 		}
-		i++
 	}
 	let firstString = ''
 	first.forEach((value, key) => {
@@ -109,9 +112,8 @@ const getFollow = (rules: Rule[]) => {
 		follow.set(vn, Set())
 	})
 	follow.set(S, Set([end]))
-	let i = 0
 	while (true) {
-		let map1 = new Map(follow)
+		let mapBefore = new Map(follow)
 		rules.map((rule) => {
 			rule.to.map((item, index) => {
 				if (item.flag == 'vn') {
@@ -177,11 +179,15 @@ const getFollow = (rules: Rule[]) => {
 				}
 			})
 		})
-
-		if (i == 20) {
+		let same = true
+		mapBefore.forEach((v, k) => {
+			if (!v.equals(follow.get(k))) {
+				same = false
+			}
+		})
+		if (same) {
 			break
 		}
-		i++
 	}
 	let followString = ''
 	follow.forEach((value, key) => {
@@ -208,30 +214,42 @@ const getTable = (rules: Rule[]) => {
 		table.set(vn, innerMap)
 	})
 	rules.map((rule) => {
-		if (rule.to[0].flag == 'vt') {
-			let innerMap = table.get(rule.from)
-			innerMap?.set(rule.to[0], rule)
-			table.set(rule.from, innerMap!)
-		} else {
-			let innerMap = table.get(rule.from)
-			first.get(rule.to[0])?.map((vt) => {
-				innerMap?.set(vt, rule)
-			})
-			table.set(rule.from, innerMap!)
-			if (first.get(rule.to[0])?.has(epsilon)) {
-				let tempMap = table.get(rule.from)
-				follow.get(rule.from)?.map((vt) => {
-					tempMap?.set(vt, rule)
-				})
-				table.set(rule.from, tempMap!)
+		let innerMap = table.get(rule.from)!
+		let hasEpsilon = true
+		for (let symbol of rule.to) {
+			if (symbol.flag == 'vt') {
+				if (symbol != epsilon) {
+					innerMap?.set(symbol, rule)
+					hasEpsilon = false
+					break
+				} else {
+					hasEpsilon = true
+				}
+			} else {
+				if (first.get(symbol)?.has(epsilon)) {
+					for (let fst of first.get(symbol)!) {
+						if (fst != epsilon) {
+							innerMap?.set(fst, rule)
+						}
+					}
+				} else {
+					for (let fst of first.get(symbol)!) {
+						innerMap?.set(fst, rule)
+					}
+					hasEpsilon = false
+					break
+				}
 			}
 		}
+		if (hasEpsilon) {
+			for (let flw of follow.get(rule.from)!) {
+				innerMap?.set(flw, { from: rule.from, to: [epsilon] })
+			}
+		}
+		table.set(rule.from, innerMap)
 	})
-	let temp = table.get(args)
-	temp?.set(lb, { from: args, to: [type, idn, arg] })
-	table.set(args, temp!)
 }
-const getString = async () => {
+const getCSV = async () => {
 	VN.map((vn) => {
 		let innerMap: Map<string, string> = new Map()
 		VT.map((vt) => {
@@ -269,7 +287,6 @@ const getString = async () => {
 	VT.map((t) => {
 		temp1.push(t.type! == 'op' || t.type! == 'se' ? t.value! : t.type!)
 	})
-	stack = config
 	arr.push(temp1)
 	stringTable.forEach((v, k) => {
 		let innerArray = []
@@ -280,65 +297,109 @@ const getString = async () => {
 		arr.push(innerArray)
 	})
 	const csv = new ObjectsToCsv(arr)
-	await csv.toDisk('./test.csv')
+	await csv.toDisk('./table.csv')
 }
 
 export const getStack = (src: token[]) => {
-	getFirst(rules)
-	getFollow(rules)
-	getTable(rules)
-	getString()
-
-	let symbolStack = []
-	let tokens: token[] = src.concat({ type: '#', value: '' })
-	symbolStack.push(end)
-	symbolStack.push(S)
-
 	try {
-		let i = 0
-		while (i <= tokens.length) {
+		getFirst(rules)
+		getFollow(rules)
+		getTable(rules)
+		getCSV()
+
+		let symbolStack: Symbol[] = []
+		let tokens: token[] = src.concat({ type: '#', value: '' })
+		symbolStack.push(end)
+		symbolStack.push(S)
+		stack.push([
+			'S-#',
+			symbolStack
+				.map((e) =>
+					e.type == 'op' || e.type == 'se' ? e.value : e.type
+				)
+				.toString(),
+			'',
+		])
+
+		for (let i = 0; i < tokens.length; ) {
+			let result: string[] = []
 			let tokenType =
-				tokens[i].type == 'OP' || tokens[i].type == 'SE'
-					? tokens[i].value
+				tokens[i].type == 'op' || tokens[i].type == 'se'
+					? tokens[i].value!
 					: tokens[i].type
 			let topType =
 				symbolStack[symbolStack.length - 1].type == 'op' ||
 				symbolStack[symbolStack.length - 1].type == 'se'
 					? symbolStack[symbolStack.length - 1].value
 					: symbolStack[symbolStack.length - 1].type
-			if (topType!.toLowerCase() == tokenType.toLowerCase()) {
+			result.push(topType + '-' + tokenType)
+			result.push('')
+			if (tokenType == topType!) {
 				symbolStack.pop()
-				topType =
-					symbolStack[symbolStack.length - 1].type == 'op' ||
-					symbolStack[symbolStack.length - 1].type == 'se'
-						? symbolStack[symbolStack.length - 1].value
-						: symbolStack[symbolStack.length - 1].type
+				result.push('')
 				i++
-			}
-			for (let [key, inputMap] of table) {
-				if (key.type == topType) {
-					for (let [input, rule] of inputMap) {
-						let inputType =
-							input.type == 'op' || input.type == 'se'
-								? input.value
-								: input.type
-						if (
-							tokenType.toLowerCase() == inputType!.toLowerCase()
-						) {
-							symbolStack.pop()
-							rule?.to
-								.reverse()
-								.map((symbol) => symbolStack.push(symbol))
-
-							console.log(tokens[i])
+			} else {
+				if (symbolStack[symbolStack.length - 1].flag == 'vn') {
+					let innerMap = table.get(
+						symbolStack[symbolStack.length - 1]
+					)!
+					let pass = false
+					let iter = true
+					innerMap.forEach((value, key) => {
+						if (iter) {
+							let keyType =
+								key.type == 'op' || key.type == 'se'
+									? key.value
+									: key.type
+							if (keyType == tokenType) {
+								if (value) {
+									if (value.to.find((e) => e == epsilon)) {
+										symbolStack.pop()
+									} else {
+										symbolStack.pop()
+										value.to
+											.slice()
+											.reverse()
+											.map((e) => {
+												symbolStack.push(e)
+											})
+									}
+									result.push(
+										value.from.type +
+											' -> ' +
+											value.to
+												.map((e) =>
+													e.type == 'op' ||
+													e.type == 'se'
+														? e.value
+														: e.type
+												)
+												.toString()
+									)
+									pass = true
+									iter = false
+								}
+							}
 						}
+					})
+					if (!pass) {
+						throw unacceptable(tokenType, i)
 					}
+				} else {
+					throw unacceptable(tokenType, i)
 				}
 			}
-			i++
+			result[1] = symbolStack
+				.map((e) =>
+					e.type == 'op' || e.type == 'se' ? e.value : e.type
+				)
+				.toString()
+
+			stack.push(result)
 		}
-	} catch (err) {}
-	stack.map((item) => {
-		console.log(item[0] + '\t\t  ' + item[1] + '\t\t  ' + item[2])
-	})
+
+		return stack
+	} catch (error) {
+		console.error(error)
+	}
 }

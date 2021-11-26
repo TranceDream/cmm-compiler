@@ -22,7 +22,7 @@ const unacceptable = new Error('Failed to pass lexical analysis.')
 
 export interface token {
 	type: string
-	value: string
+	value: string | undefined
 }
 
 interface lexical {
@@ -32,6 +32,7 @@ interface lexical {
 
 export function analyze(source: string): lexical {
 	const data: string[] = source.split('')
+	data.push(' ')
 	let current: string = ''
 	let symbols: token[] = []
 	let fsm = interpret(
@@ -52,6 +53,7 @@ export function analyze(source: string): lexical {
 				} else if (data[i].match(/\s/)) {
 					fsm.send('init')
 				} else {
+					console.log(data[i])
 					throw unacceptable
 				}
 				break
@@ -60,7 +62,7 @@ export function analyze(source: string): lexical {
 					fsm.send(idnRecv(data[i])!)
 					current += data[i]
 				} else {
-					symbols.push({ type: 'IDN', value: current })
+					symbols.push({ type: 'idn', value: current })
 					current = ''
 					fsm.send('init')
 					i--
@@ -71,7 +73,7 @@ export function analyze(source: string): lexical {
 					fsm.send(intRecv(data[i])!)
 					current += data[i]
 				} else {
-					symbols.push({ type: 'CONST', value: current })
+					symbols.push({ type: 'const', value: current })
 					current = ''
 					fsm.send('init')
 					i--
@@ -82,6 +84,7 @@ export function analyze(source: string): lexical {
 					fsm.send(floatRecv(data[i])!)
 					current += data[i]
 				} else {
+					console.log(data[i])
 					throw unacceptable
 				}
 				break
@@ -90,14 +93,14 @@ export function analyze(source: string): lexical {
 					fsm.send(floatRecv(data[i])!)
 					current += data[i]
 				} else {
-					symbols.push({ type: 'CONST', value: current })
+					symbols.push({ type: 'const', value: current })
 					current = ''
 					fsm.send('init')
 					i--
 				}
 				break
 			case 'se':
-				symbols.push({ type: 'SE', value: current })
+				symbols.push({ type: 'se', value: current })
 				current = ''
 				fsm.send('init')
 				i--
@@ -107,6 +110,7 @@ export function analyze(source: string): lexical {
 					fsm.send(char0Recv(data[i])!)
 					current += data[i]
 				} else {
+					console.log(data[i])
 					throw unacceptable
 				}
 				break
@@ -115,11 +119,12 @@ export function analyze(source: string): lexical {
 					fsm.send(char1Recv(data[i])!)
 					current += data[i]
 				} else {
+					console.log(data[i])
 					throw unacceptable
 				}
 				break
 			case 'char':
-				symbols.push({ type: 'CHAR', value: current })
+				symbols.push({ type: 'const', value: current })
 				current = ''
 				fsm.send('init')
 				i--
@@ -129,11 +134,12 @@ export function analyze(source: string): lexical {
 					fsm.send(str0Recv(data[i])!)
 					current += data[i]
 				} else {
+					console.log(data[i])
 					throw unacceptable
 				}
 				break
 			case 'str':
-				symbols.push({ type: 'STR', value: current })
+				symbols.push({ type: 'str', value: current })
 				current = ''
 				fsm.send('init')
 				i--
@@ -144,7 +150,7 @@ export function analyze(source: string): lexical {
 					fsm.send(pmRecv(data[i], current)!)
 					current += data[i]
 				} else {
-					symbols.push({ type: 'OP', value: current })
+					symbols.push({ type: 'op', value: current })
 					current = ''
 					fsm.send('init')
 					i--
@@ -155,7 +161,7 @@ export function analyze(source: string): lexical {
 					fsm.send(equalRecv(data[i])!)
 					current += data[i]
 				} else {
-					symbols.push({ type: 'OP', value: current })
+					symbols.push({ type: 'op', value: current })
 					current = ''
 					fsm.send('init')
 					i--
@@ -167,6 +173,7 @@ export function analyze(source: string): lexical {
 					fsm.send(aoRecv(data[i], current)!)
 					current += data[i]
 				} else {
+					console.log(data[i])
 					throw unacceptable
 				}
 				break
@@ -175,11 +182,12 @@ export function analyze(source: string): lexical {
 					fsm.send(equalRecv(data[i])!)
 					current += data[i]
 				} else {
+					console.log(data[i])
 					throw unacceptable
 				}
 				break
 			case 'op':
-				symbols.push({ type: 'OP', value: current })
+				symbols.push({ type: 'op', value: current })
 				current = ''
 				fsm.send('init')
 				i--
@@ -188,15 +196,15 @@ export function analyze(source: string): lexical {
 	}
 	fsm.stop()
 
-	let stream: string[] = symbols.map((token) => token.value)
+	let stream: string[] = symbols.map((token) => token.value!)
 	let tokens: token[] = symbols.map((token) => {
-		if (token.type == 'IDN') {
+		if (token.type == 'idn') {
 			let isKeyword = keywords.find((keyword) => token.value == keyword)
 				? true
 				: false
 			return {
-				type: isKeyword ? token.value.toUpperCase() : 'IDN',
-				value: isKeyword ? '_' : token.value,
+				type: isKeyword ? token.value! : 'idn',
+				value: isKeyword ? undefined : token.value,
 			}
 		} else {
 			return token

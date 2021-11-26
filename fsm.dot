@@ -16,7 +16,6 @@ digraph {
     init -> char0 [label = "single"]
     char0 -> char1 [label = "any"]
     char1 -> char [label = "single"]
-    char0 -> char [label = "single"]
 
     init -> str0 [label = "double"]
     str0 -> str0 [label = "any"]
@@ -36,19 +35,6 @@ digraph {
     init -> and [label = "and"]
     and -> op [label = "and"]
 
-    init -> bang [label = "bang"]
-    bang -> op [label = "equal"]
-
     init -> op0 [label = "other-operators"]
     op0 -> op [label = "equal"]
-
-    // init -> plus [label = "plus"]
-    // plus -> inc [label = "plus"]
-    // init -> dash [label = "dash"]
-    // dash -> dec [label = "dash"]
-    // init -> or [label = "or"]
-    // or -> lor [label = "or"]
-    // init -> and [label = "and"]
-    // and -> land [label = "and"]
-
 }
